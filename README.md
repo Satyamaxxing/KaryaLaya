@@ -1,113 +1,208 @@
-# SynergySphere  
+# 🏢 KaryaLaya – A Workplace Platform
 
-⚡ **SynergySphere** is a full-stack collaboration platform (Next.js + Node.js + PostgreSQL).  
-It provides authentication, project management, team collaboration, communication, and progress tracking.  
+⚡ **KaryaLaya** is a full-stack workplace collaboration platform designed to streamline team productivity.
+It enables **authentication, project management, file sharing, team communication, and progress tracking** — all in one modern workspace.
 
 ---
 
 ## 🛠 Tech Stack
 
-- **Frontend:** Next.js (React, TailwindCSS, ShadCN UI)
-- **Backend:** Node.js (Express.js, PostgreSQL with `pg`)
-- **Database:** PostgreSQL (Dockerized)
-- **Containerization:** Docker + Docker Compose
+* **Frontend:** Next.js (React, TailwindCSS, ShadCN UI)
+* **Backend:** Node.js (Express.js)
+* **Database:** PostgreSQL (Supabase / Hosted DB)
+* **Auth & Storage:** Supabase (JWT + File Storage)
+* **Deployment:**
+
+  * Frontend → Vercel
+  * Backend → Render
 
 ---
 
 ## 📂 Project Structure
 
-SynergySphere/
-├── backend/ # Node.js + Express backend
-│ ├── src/ # API source code
-│ ├── package.json
-│ └── .env # Backend environment variables
-├── frontend/ # Next.js frontend
-│ ├── app/ # Next.js app routes
-│ ├── components/ # UI components
-│ ├── package.json
-│ └── .env.local # Frontend environment variables
-├── docker-compose.yml
+```
+KaryaLaya/
+├── backend/                # Express backend
+│   ├── src/               # API routes & logic
+│   ├── db.js              # Database connection
+│   ├── routes.js          # API endpoints
+│   ├── package.json
+│   └── .env               # Backend env variables
+│
+├── frontend/              # Next.js frontend
+│   ├── app/               # App router pages
+│   ├── components/        # UI components
+│   ├── hooks/             # Custom hooks
+│   ├── package.json
+│   └── .env.local         # Frontend env variables
+│
 └── README.md
-
+```
 
 ---
 
-## ⚙️ Setup Instructions
+## ⚙️ Environment Variables
 
-### 1️⃣ Clone the repo
-```bash
-git clone https://github.com/yourusername/synergysphere.git
-cd SynergySphere
-Backend (backend/.env)
-DB_HOST=db
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=postgres
-DB_NAME=hackdb
+### 🔹 Backend (.env)
+
+```
+DATABASE_URL=your_postgres_connection_string
 PORT=8000
+```
 
-Frontend (frontend/.env.local)
-NEXT_PUBLIC_API_URL=http://localhost:8000
+---
 
-3️⃣ Run with Docker (Recommended)
-docker-compose up --build
+### 🔹 Frontend (.env.local)
 
+```
+NEXT_PUBLIC_API_URL=https://your-backend-url.onrender.com
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-Backend → http://localhost:8000
+---
 
-Frontend → http://localhost:3000
+## 🚀 Local Setup
 
-Postgres DB → localhost:5432 (user: postgres, password: postgres, db: hackdb)
+### 1️⃣ Clone the repository
 
-4️⃣ Run Locally without Docker (Optional)
-Start PostgreSQL manually
+```bash
+git clone https://github.com/yourusername/karyalaya.git
+cd karyalaya
+```
 
-(make sure DB hackdb exists and credentials match .env)
+---
 
-Start Backend
+### 2️⃣ Install dependencies
+
+#### Backend
+
+```bash
 cd backend
 npm install
-npm run dev
+```
 
-Start Frontend
+#### Frontend
+
+```bash
 cd frontend
 npm install
+```
+
+---
+
+### 3️⃣ Run the app
+
+#### Start Backend
+
+```bash
 npm run dev
+```
 
-🚀 Features
+#### Start Frontend
 
-🔑 User Authentication (Sign Up / Sign In)
+```bash
+npm run dev
+```
 
-📊 Project Management
+---
 
-👥 Team Collaboration
+### 🌐 Local URLs
 
-💬 Communication with threads
+* Frontend → http://localhost:3000
+* Backend → http://localhost:8000
 
-📈 Progress Tracking
+---
 
-🧪 Testing
+## 🌍 Deployment
 
-Backend:
+### 🔹 Frontend (Vercel)
 
+* Connect GitHub repo
+* Add environment variables
+* Deploy
+
+---
+
+### 🔹 Backend (Render)
+
+* Create new Web Service
+* Connect repo
+* Add `DATABASE_URL`
+* Deploy
+
+---
+
+## ✨ Features
+
+* 🔐 **Authentication (Supabase)**
+* 👤 **User Profiles with Avatar Upload**
+* 📊 **Project Management Dashboard**
+* 👥 **Team Collaboration**
+* 💬 **Real-time Communication UI**
+* 📁 **File Upload & Sharing**
+* 📈 **Progress Tracking**
+* ⚡ **Modern UI with smooth UX**
+
+---
+
+## 🧪 Testing
+
+### Backend
+
+```bash
 cd backend
 npm test
+```
 
+### Frontend
 
-Frontend:
-
+```bash
 cd frontend
 npm run lint
+```
 
-📜 License
+---
 
-MIT License © 2025
+## 🐞 Common Issues & Fixes
 
-👨‍💻 Contributors
+### ❌ "Failed to fetch"
 
-You 🚀
+* Ensure `NEXT_PUBLIC_API_URL` is **not localhost in production**
 
-Your team
+---
 
+### ❌ "invalid compact jws"
 
----'''
+* Missing `Authorization: Bearer <token>` in API requests
+
+---
+
+### ❌ Backend not responding
+
+* Render free tier may sleep → wait ~30–50 seconds
+
+---
+
+## 📜 License
+
+MIT License © 2026
+
+---
+
+## 👨‍💻 Author
+
+**Satyam Kumar** 🚀
+
+---
+
+## 🌟 Future Improvements
+
+* 🔔 Real-time notifications
+* 📱 Mobile responsiveness improvements
+* 🤝 Team roles & permissions
+* 📊 Advanced analytics dashboard
+
+---
+
+🔥 *KaryaLaya is built to bring teams together and simplify workplace collaboration.*
