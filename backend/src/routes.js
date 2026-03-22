@@ -1,80 +1,108 @@
-// backend/src/routes.js
 const bcrypt = require("bcryptjs");
 
 module.exports.attachRoutes = function (app, pool) {
-  app.get("/api/health", (req, res) => res.json({ status: "ok" }));
+  
+  // 🔥 HEALTH CHECK
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok" });
+  });
 
+  // 🔥 PROJECTS
   app.get("/api/projects", async (_req, res) => {
     try {
       const r = await pool.query("SELECT * FROM projects ORDER BY id");
       res.json(r.rows.map(normalizeProject));
     } catch (e) {
       console.error(e);
-      res.status(500).json({ error: "db error" });
+      res.status(500).json({ error: "DB error" });
     }
   });
 
   app.get("/api/projects/:id", async (req, res) => {
     try {
-      const r = await pool.query("SELECT * FROM projects WHERE id=$1", [req.params.id]);
-      if (r.rowCount === 0) return res.status(404).json({ error: "not found" });
+      const r = await pool.query(
+        "SELECT * FROM projects WHERE id=$1",
+        [req.params.id]
+      );
+      if (r.rowCount === 0) {
+        return res.status(404).json({ error: "Not found" });
+      }
       res.json(normalizeProject(r.rows[0]));
     } catch (e) {
       console.error(e);
-      res.status(500).json({ error: "db error" });
+      res.status(500).json({ error: "DB error" });
     }
   });
 
+  // 🔥 TASKS
   app.get("/api/tasks", async (_req, res) => {
     try {
       const r = await pool.query("SELECT * FROM tasks ORDER BY id");
       res.json(r.rows);
     } catch (e) {
       console.error(e);
-      res.status(500).json({ error: "db error" });
+      res.status(500).json({ error: "DB error" });
     }
   });
 
+  // 🔥 MESSAGES
   app.get("/api/messages", async (_req, res) => {
     try {
-      const r = await pool.query("SELECT * FROM messages ORDER BY created_at DESC");
+      const r = await pool.query(
+        "SELECT * FROM messages ORDER BY created_at DESC"
+      );
       res.json(r.rows);
     } catch (e) {
       console.error(e);
-      res.status(500).json({ error: "db error" });
+      res.status(500).json({ error: "DB error" });
     }
   });
 
+  // 🔥 NOTIFICATIONS
   app.get("/api/notifications", async (_req, res) => {
     try {
-      const r = await pool.query("SELECT * FROM notifications ORDER BY created_at DESC");
+      const r = await pool.query(
+        "SELECT * FROM notifications ORDER BY created_at DESC"
+      );
       res.json(r.rows);
     } catch (e) {
       console.error(e);
-      res.status(500).json({ error: "db error" });
+      res.status(500).json({ error: "DB error" });
     }
   });
 
+  // 🔥 USERS
   app.get("/api/users", async (_req, res) => {
     try {
-      const r = await pool.query("SELECT id, name, email, role FROM users ORDER BY id");
+      const r = await pool.query(
+        "SELECT id, name, email, role FROM users ORDER BY id"
+      );
       res.json(r.rows);
     } catch (e) {
       console.error(e);
-      res.status(500).json({ error: "db error" });
+      res.status(500).json({ error: "DB error" });
     }
   });
 
-  // ------------------- AUTH -------------------
+  // ================= AUTH =================
 
+  // 🔐 SIGNUP
   app.post("/api/auth/signup", async (req, res) => {
     const { name, email, password } = req.body || {};
+
     if (!name || !email || !password) {
-      return res.status(400).json({ error: "All fields are required" });
+      return res.status(400).json({ error: "All fields required" });
     }
+
     try {
       const hashed = await bcrypt.hash(password, 10);
-      const initials = name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
+
+      const initials = name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
 
       const result = await pool.query(
         `INSERT INTO users (name, initials, role, avatar, email, password)
@@ -99,19 +127,32 @@ module.exports.attachRoutes = function (app, pool) {
     }
   });
 
-  // ── UPDATED: avatar_url bhi return karta hai ──
+  // 🔐 SIGNIN
   app.post("/api/auth/signin", async (req, res) => {
     const { email, password } = req.body || {};
+
     if (!email || !password) {
-      return res.status(400).json({ error: "Email and password required" });
+      return res
+        .status(400)
+        .json({ error: "Email and password required" });
     }
+
     try {
-      const r = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
-      if (r.rowCount === 0) return res.status(401).json({ error: "Invalid credentials" });
+      const r = await pool.query(
+        "SELECT * FROM users WHERE email=$1",
+        [email]
+      );
+
+      if (r.rowCount === 0) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
 
       const user = r.rows[0];
+
       const ok = await bcrypt.compare(password, user.password || "");
-      if (!ok) return res.status(401).json({ error: "Invalid credentials" });
+      if (!ok) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
 
       res.json({
         id: user.id,
@@ -125,17 +166,22 @@ module.exports.attachRoutes = function (app, pool) {
     }
   });
 
-  // ── NEW: avatar URL database mein save karo ──
+  // 🔐 UPDATE AVATAR
   app.post("/api/auth/update-avatar", async (req, res) => {
     const { email, avatar_url } = req.body || {};
+
     if (!email || !avatar_url) {
-      return res.status(400).json({ error: "Email and avatar_url required" });
+      return res
+        .status(400)
+        .json({ error: "Email and avatar_url required" });
     }
+
     try {
       await pool.query(
         "UPDATE users SET avatar_url=$1 WHERE email=$2",
         [avatar_url, email]
       );
+
       res.json({ success: true, avatar_url });
     } catch (e) {
       console.error("❌ Avatar update error:", e);
@@ -143,7 +189,8 @@ module.exports.attachRoutes = function (app, pool) {
     }
   });
 
-  // ------------------- Helpers -------------------
+  // ================= HELPERS =================
+
   function normalizeProject(row) {
     return {
       id: row.id,
@@ -152,10 +199,10 @@ module.exports.attachRoutes = function (app, pool) {
       progress: row.progress,
       members: row.members,
       tasks_summary: row.tasks_summary,
-      due_date: row.due_date ? row.due_date : null,
+      due_date: row.due_date || null,
       status: row.status,
       priority: row.priority,
-      created_at: row.created_at ? row.created_at : null,
+      created_at: row.created_at || null,
     };
   }
 };

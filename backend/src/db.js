@@ -1,10 +1,3 @@
-
-// backend/src/db.jsconsole.log("ENV CHECK:");
-console.log("DB_HOST:", process.env.DB_HOST);
-console.log("DATABASE_URL:", process.env.DATABASE_URL);
-
-
-
 const { Pool } = require("pg");
 
 let pool;

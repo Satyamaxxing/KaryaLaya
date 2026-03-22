@@ -1,4 +1,3 @@
-// backend/src/index.js
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -11,19 +10,8 @@ const PORT = Number(process.env.PORT || 8000);
 async function start() {
   const app = express();
 
-  // ✅ FIXED CORS (LOCAL + VERCEL)
-  app.use(
-    cors({
-      origin: [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",
-        "https://karya-laya.vercel.app", // 🔥 VERCEL ADD
-        "https://karyalaya.vercel.app",  // (backup if diff url)
-      ],
-      credentials: true,
-    })
-  );
+  // 🔥 FINAL CORS FIX (NO POPUP, NO FAILED FETCH)
+  app.use(cors()); // simple & best for now
 
   app.use(express.json());
 
