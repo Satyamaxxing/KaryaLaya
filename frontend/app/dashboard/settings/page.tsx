@@ -220,10 +220,21 @@ export default function SettingsPage() {
 
       const avatar_url = urlData.publicUrl
 
-      // Save to backend DB
+      // Save to backend DB (FIXED WITH AUTH TOKEN)
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData?.session?.access_token
+
+      if (!token) {
+        showToast("User not authenticated. Please login again.", "error")
+        return
+      }
+
       const res = await fetch(`${API_URL}/api/auth/update-avatar`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ email: user.email, avatar_url }),
       })
 
