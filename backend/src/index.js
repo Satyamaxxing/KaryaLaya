@@ -10,37 +10,12 @@ const PORT = Number(process.env.PORT || 8000);
 async function start() {
   const app = express();
 
-  // 🔥 FINAL CORS FIX (DYNAMIC ORIGIN)
-  app.use(
-    cors({
-      origin: function (origin, callback) {
-        // allow requests with no origin (mobile apps, curl, etc.)
-        if (!origin) return callback(null, true);
-
-        const allowed = [
-          "http://localhost:3000",
-          "http://127.0.0.1:3000",
-          "http://localhost:3001",
-          "https://karya-laya.vercel.app",
-          "https://karyalaya.vercel.app",
-        ];
-
-        if (allowed.includes(origin)) {
-          return callback(null, true);
-        } else {
-          return callback(null, true); // 🔥 allow all (important)
-        }
-      },
-      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization"],
-    })
-  );
-
-  // 🔥 preflight fix
-  app.options("*", cors());
+  // 🔥 SIMPLE CORS (FINAL FIX)
+  app.use(cors());
 
   app.use(express.json());
 
+  // ✅ ROOT ROUTE
   app.get("/", (req, res) => {
     res.send("🚀 KaryaLaya Backend is running successfully!");
   });
